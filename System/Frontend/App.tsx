@@ -3,33 +3,26 @@ import "./global.css";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
-import { Text, View } from "react-native";
 
+import ClienteCadastrarScreen from "./telas/ClienteCadastrarScreen";
+import ClienteDetalhesScreen from "./telas/ClienteDetalhesScreen";
+import ClienteEditarScreen from "./telas/ClienteEditarScreen";
+import ClienteExcluirScreen from "./telas/ClienteExcluirScreen";
 import ClientesListScreen from "./telas/ClientesListScreen";
 import InicioScreen from "./telas/InicioScreen";
-
-type RootStackParamList = {
-  Inicio: undefined;
-  ClientesLista: undefined;
-  ClienteCadastrar: undefined;
-  VeiculosLista: undefined;
-  OrdensLista: undefined;
-};
+import OrdemCadastrarScreen from "./telas/OrdemCadastrarScreen";
+import OrdemDetalhesScreen from "./telas/OrdemDetalhesScreen";
+import OrdemEditarScreen from "./telas/OrdemEditarScreen";
+import OrdemExcluirScreen from "./telas/OrdemExcluirScreen";
+import OrdensListScreen from "./telas/OrdensListScreen";
+import VeiculoCadastrarScreen from "./telas/VeiculoCadastrarScreen";
+import VeiculoDetalhesScreen from "./telas/VeiculoDetalhesScreen";
+import VeiculoEditarScreen from "./telas/VeiculoEditarScreen";
+import VeiculoExcluirScreen from "./telas/VeiculoExcluirScreen";
+import VeiculosListScreen from "./telas/VeiculosListScreen";
+import type { RootStackParamList } from "./types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-function TelaEmDesenvolvimento({ titulo }: { titulo: string }) {
-  return (
-    <View className="flex-1 items-center justify-center bg-slate-100 px-6">
-      <Text className="text-center text-2xl font-bold text-slate-900">
-        {titulo}
-      </Text>
-      <Text className="mt-3 text-center text-base text-slate-600">
-        Esta tela ainda está em desenvolvimento.
-      </Text>
-    </View>
-  );
-}
 
 export default function App() {
   return (
@@ -40,16 +33,10 @@ export default function App() {
         initialRouteName="Inicio"
         screenOptions={{
           headerShadowVisible: false,
-          headerStyle: {
-            backgroundColor: "#f1f5f9",
-          },
+          headerStyle: { backgroundColor: "#f1f5f9" },
           headerTintColor: "#0f172a",
-          headerTitleStyle: {
-            fontWeight: "600",
-          },
-          contentStyle: {
-            backgroundColor: "#f1f5f9",
-          },
+          headerTitleStyle: { fontWeight: "600" },
+          contentStyle: { backgroundColor: "#f1f5f9" },
         }}
       >
         <Stack.Screen
@@ -58,29 +45,23 @@ export default function App() {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
-          name="ClientesLista"
-          component={ClientesListScreen}
-          options={{ title: "Clientes" }}
-        />
+        <Stack.Screen name="ClientesLista" component={ClientesListScreen} options={{ title: "Clientes" }} />
+        <Stack.Screen name="ClienteDetalhes" component={ClienteDetalhesScreen} options={{ title: "Detalhes do cliente" }} />
+        <Stack.Screen name="ClienteCadastrar" component={ClienteCadastrarScreen} options={{ title: "Novo cliente" }} />
+        <Stack.Screen name="ClienteEditar" component={ClienteEditarScreen} options={{ title: "Editar cliente" }} />
+        <Stack.Screen name="ClienteExcluir" component={ClienteExcluirScreen} options={{ title: "Excluir cliente" }} />
 
-        <Stack.Screen
-          name="ClienteCadastrar"
-          options={{ title: "Novo Cliente" }}
-        >
-          {() => <TelaEmDesenvolvimento titulo="Cadastro de Cliente" />}
-        </Stack.Screen>
+        <Stack.Screen name="VeiculosLista" component={VeiculosListScreen} options={{ title: "Veículos" }} />
+        <Stack.Screen name="VeiculoDetalhes" component={VeiculoDetalhesScreen} options={{ title: "Detalhes do veículo" }} />
+        <Stack.Screen name="VeiculoCadastrar" component={VeiculoCadastrarScreen} options={{ title: "Novo veículo" }} />
+        <Stack.Screen name="VeiculoEditar" component={VeiculoEditarScreen} options={{ title: "Editar veículo" }} />
+        <Stack.Screen name="VeiculoExcluir" component={VeiculoExcluirScreen} options={{ title: "Excluir veículo" }} />
 
-        <Stack.Screen name="VeiculosLista" options={{ title: "Veículos" }}>
-          {() => <TelaEmDesenvolvimento titulo="Veículos" />}
-        </Stack.Screen>
-
-        <Stack.Screen
-          name="OrdensLista"
-          options={{ title: "Ordens de Serviço" }}
-        >
-          {() => <TelaEmDesenvolvimento titulo="Ordens de Serviço" />}
-        </Stack.Screen>
+        <Stack.Screen name="OrdensLista" component={OrdensListScreen} options={{ title: "Ordens de serviço" }} />
+        <Stack.Screen name="OrdemDetalhes" component={OrdemDetalhesScreen} options={{ title: "Detalhes da ordem" }} />
+        <Stack.Screen name="OrdemCadastrar" component={OrdemCadastrarScreen} options={{ title: "Nova ordem" }} />
+        <Stack.Screen name="OrdemEditar" component={OrdemEditarScreen} options={{ title: "Editar ordem" }} />
+        <Stack.Screen name="OrdemExcluir" component={OrdemExcluirScreen} options={{ title: "Excluir ordem" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

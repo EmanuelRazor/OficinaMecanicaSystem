@@ -4,7 +4,8 @@
   "description": "API didática do sistema de oficina mecânica",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test:api": "node test-api.js"
   },
   "keywords": [],
   "author": "",

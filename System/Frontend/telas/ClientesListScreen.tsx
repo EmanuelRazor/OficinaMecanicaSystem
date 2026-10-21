@@ -1,66 +1,86 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 
-const API_URL = "http://192.168.1.50:3000";
+import ActionButton from "../components/ActionButton";
+import FeedbackState from "../components/FeedbackState";
+import { api, mensagemDeErro } from "../services/api";
+import type { Cliente } from "../types/models";
+import type { RootStackParamList } from "../types/navigation";
 
-export default function ClientesListScreen({ navigation }: any) {
-  const [clientes, setClientes] = useState<any[]>([]);
+type Props = NativeStackScreenProps<RootStackParamList, "ClientesLista">;
 
-  async function buscarClientes() {
+export default function ClientesListScreen({ navigation }: Props) {
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const carregarClientes = useCallback(async (manual = false) => {
+    if (manual) setRefreshing(true);
+    else setLoading(true);
+
+    setErro(null);
+
     try {
-      const resposta = await fetch(`${API_URL}/clientes`);
-
-      const dados = await resposta.json();
-
-      setClientes(dados);
-    } catch (erro) {
-      console.error("Erro ao buscar clientes:", erro);
+      setClientes(await api.listarClientes());
+    } catch (error) {
+      setErro(mensagemDeErro(error));
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-  }
-
-  useEffect(() => {
-    buscarClientes();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      void carregarClientes();
+    }, [carregarClientes]),
+  );
+
+  if (loading && clientes.length === 0) {
+    return <FeedbackState loading message="Carregando clientes..." />;
+  }
+
+  if (erro && clientes.length === 0) {
+    return <FeedbackState message={erro} onRetry={() => void carregarClientes()} />;
+  }
+
   return (
-    <View className="flex-1 bg-slate-100 p-6 pt-12">
+    <View className="flex-1 bg-slate-100 px-5 py-5">
+      <View className="mb-5">
+        <ActionButton title="Novo cliente" onPress={() => navigation.navigate("ClienteCadastrar")} />
+      </View>
 
-      <Text className="mb-4 text-2xl font-bold text-slate-800">
-        Lista de Clientes
-      </Text>
-
-      <TouchableOpacity
-        className="mb-5 rounded-xl bg-blue-600 p-4"
-        onPress={() => navigation.navigate("ClienteCadastrar")}
-      >
-        <Text className="text-center font-bold text-white">
-          Novo Cliente
-        </Text>
-      </TouchableOpacity>
+      {erro ? <Text className="mb-3 text-sm text-red-600">{erro}</Text> : null}
 
       <FlatList
         data={clientes}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View className="mb-3 rounded-xl border border-slate-200 bg-white p-4">
-
-            <Text className="text-lg font-semibold text-slate-900">
-              {item.nome}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => void carregarClientes(true)} />
+        }
+        contentContainerStyle={clientes.length === 0 ? { flexGrow: 1 } : { paddingBottom: 24 }}
+        ListEmptyComponent={
+          <View className="flex-1 items-center justify-center px-8">
+            <Text className="text-center text-base text-slate-500">
+              Nenhum cliente cadastrado. Toque em “Novo cliente” para começar.
             </Text>
-
-            <Text className="text-sm text-slate-500">
-              {item.email}
-            </Text>
-
           </View>
+        }
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            className="mb-3 rounded-2xl border border-slate-200 bg-white p-4"
+            onPress={() => navigation.navigate("ClienteDetalhes", { id: item.id })}
+            activeOpacity={0.8}
+          >
+            <Text className="text-lg font-bold text-slate-900">{item.nome}</Text>
+            <Text className="mt-1 text-sm text-slate-500">{item.email || "Sem e-mail"}</Text>
+            {item.telefone ? <Text className="mt-1 text-sm text-slate-500">{item.telefone}</Text> : null}
+          </TouchableOpacity>
         )}
       />
-
     </View>
   );
 }
