@@ -43,17 +43,23 @@ export default function ClientesListScreen({ navigation }: Props) {
     return <FeedbackState loading message="Carregando clientes..." />;
   }
 
-  if (erro && clientes.length === 0) {
-    return <FeedbackState message={erro} onRetry={() => void carregarClientes()} />;
-  }
-
   return (
     <View className="flex-1 bg-slate-100 px-5 py-5">
       <View className="mb-5">
         <ActionButton title="Novo cliente" onPress={() => navigation.navigate("ClienteCadastrar")} />
       </View>
 
-      {erro ? <Text className="mb-3 text-sm text-red-600">{erro}</Text> : null}
+      {erro ? (
+        <View className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4">
+          <Text className="text-sm text-red-700">{erro}</Text>
+          <TouchableOpacity
+            className="mt-3 self-start rounded-xl bg-red-600 px-4 py-2"
+            onPress={() => void carregarClientes()}
+          >
+            <Text className="font-semibold text-white">Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <FlatList
         data={clientes}
@@ -65,7 +71,9 @@ export default function ClientesListScreen({ navigation }: Props) {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center px-8">
             <Text className="text-center text-base text-slate-500">
-              Nenhum cliente cadastrado. Toque em “Novo cliente” para começar.
+              {erro
+                ? "A lista não pôde ser carregada, mas você ainda pode navegar e tentar novamente."
+                : "Nenhum cliente cadastrado. Toque em “Novo cliente” para começar."}
             </Text>
           </View>
         }

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -9,6 +10,19 @@ app.use(cors());
 let clientes = [];
 let veiculos = [];
 let ordensServico = [];
+
+app.get('/', (req, res) => {
+  res.json({
+    sistema: 'Oficina Mecânica API',
+    status: 'online',
+    porta: PORT,
+    endpoints: ['/health', '/clientes', '/veiculos', '/ordens-servico'],
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
 // CLIENTES
 app.get('/clientes', (req, res) => res.json(clientes));
@@ -108,6 +122,7 @@ app.delete('/ordens-servico/:id', (req, res) => {
   res.status(204).send();
 });
 
-app.listen(3000, () => {
-  console.log('API rodando na porta 3000 🚀');
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`API rodando na porta ${PORT} 🚀`);
+  console.log(`Android Emulator: http://10.0.2.2:${PORT}`);
 });

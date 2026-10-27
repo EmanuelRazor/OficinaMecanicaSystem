@@ -38,8 +38,9 @@ export default function OrdensListScreen({ navigation }: Props) {
     }, [carregar]),
   );
 
-  if (loading && ordens.length === 0) return <FeedbackState loading message="Carregando ordens..." />;
-  if (erro && ordens.length === 0) return <FeedbackState message={erro} onRetry={() => void carregar()} />;
+  if (loading && ordens.length === 0) {
+    return <FeedbackState loading message="Carregando ordens..." />;
+  }
 
   return (
     <View className="flex-1 bg-slate-100 px-5 py-5">
@@ -47,7 +48,17 @@ export default function OrdensListScreen({ navigation }: Props) {
         <ActionButton title="Nova ordem de serviço" variant="warning" onPress={() => navigation.navigate("OrdemCadastrar")} />
       </View>
 
-      {erro ? <Text className="mb-3 text-sm text-red-600">{erro}</Text> : null}
+      {erro ? (
+        <View className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-4">
+          <Text className="text-sm text-red-700">{erro}</Text>
+          <TouchableOpacity
+            className="mt-3 self-start rounded-xl bg-red-600 px-4 py-2"
+            onPress={() => void carregar()}
+          >
+            <Text className="font-semibold text-white">Tentar novamente</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <FlatList
         data={ordens}
@@ -57,7 +68,9 @@ export default function OrdensListScreen({ navigation }: Props) {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center px-8">
             <Text className="text-center text-base text-slate-500">
-              Nenhuma ordem cadastrada. Cadastre um veículo antes de abrir uma ordem.
+              {erro
+                ? "A lista não pôde ser carregada, mas você ainda pode navegar e tentar novamente."
+                : "Nenhuma ordem cadastrada. Cadastre um veículo antes de abrir uma ordem."}
             </Text>
           </View>
         }
