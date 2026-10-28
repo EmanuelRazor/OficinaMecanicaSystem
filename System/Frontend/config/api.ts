@@ -1,9 +1,10 @@
-/**
- * Endereço do backend acessível pelo dispositivo que executa o Expo Go.
- *
- * Em um celular físico, use o IPv4 do computador na mesma rede local.
- * Exemplo: http://192.168.1.50:3000
- *
- * No emulador Android, normalmente use: http://10.0.2.2:3000
- */
-export const API_URL = "http://localhost:3000/";
+import { Platform } from "react-native";
+
+const API_PADRAO =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:3000"
+    : "http://localhost:3000";
+
+const apiConfigurada = process.env.EXPO_PUBLIC_API_URL?.trim();
+
+export const API_URL = (apiConfigurada || API_PADRAO).replace(/\/+$/, "");

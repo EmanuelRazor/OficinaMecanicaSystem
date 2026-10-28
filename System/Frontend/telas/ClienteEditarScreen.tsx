@@ -24,9 +24,11 @@ export default function ClienteEditarScreen({ navigation, route }: Props) {
     async function carregar() {
       setLoading(true);
       setErro(null);
+
       try {
         const cliente = await api.obterCliente(route.params.id);
         if (!ativo) return;
+
         setNome(cliente.nome ?? "");
         setEmail(cliente.email ?? "");
         setTelefone(cliente.telefone ?? "");
@@ -38,6 +40,7 @@ export default function ClienteEditarScreen({ navigation, route }: Props) {
     }
 
     void carregar();
+
     return () => {
       ativo = false;
     };
@@ -45,17 +48,22 @@ export default function ClienteEditarScreen({ navigation, route }: Props) {
 
   async function salvar() {
     if (!nome.trim() || !email.trim()) {
-      Alert.alert("Campos obrigatórios", "Informe o nome e o e-mail do cliente.");
+      Alert.alert(
+        "Campos obrigatórios",
+        "Informe o nome e o e-mail do cliente.",
+      );
       return;
     }
 
     setSaving(true);
+
     try {
       await api.atualizarCliente(route.params.id, {
         nome: nome.trim(),
         email: email.trim(),
         telefone: telefone.trim() || undefined,
       });
+
       Alert.alert("Sucesso", "Cliente atualizado com sucesso.", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
@@ -66,16 +74,51 @@ export default function ClienteEditarScreen({ navigation, route }: Props) {
     }
   }
 
-  if (loading) return <FeedbackState loading message="Carregando cliente..." />;
-  if (erro) return <FeedbackState message={erro} />;
+  if (loading) {
+    return <FeedbackState loading message="Carregando cliente..." />;
+  }
+
+  if (erro) {
+    return <FeedbackState message={erro} />;
+  }
 
   return (
-    <ScrollView className="flex-1 bg-slate-100" contentContainerStyle={{ padding: 20 }} keyboardShouldPersistTaps="handled">
-      <Text className="mb-5 text-base text-slate-600">Altere os dados para executar o PUT /clientes/:id.</Text>
-      <FormField label="Nome" required value={nome} onChangeText={setNome} autoCapitalize="words" />
-      <FormField label="E-mail" required value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-      <FormField label="Telefone" value={telefone} onChangeText={setTelefone} keyboardType="phone-pad" />
-      <ActionButton title="Salvar alterações" onPress={() => void salvar()} loading={saving} />
+    <ScrollView
+      className="flex-1 bg-slate-100"
+      contentContainerStyle={{ padding: 20 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Text className="mb-5 text-base text-slate-600">
+        Atualize as informações do cliente.
+      </Text>
+
+      <FormField
+        label="Nome"
+        required
+        value={nome}
+        onChangeText={setNome}
+        autoCapitalize="words"
+      />
+      <FormField
+        label="E-mail"
+        required
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
+      <FormField
+        label="Telefone"
+        value={telefone}
+        onChangeText={setTelefone}
+        keyboardType="phone-pad"
+      />
+
+      <ActionButton
+        title="Salvar alterações"
+        onPress={() => void salvar()}
+        loading={saving}
+      />
     </ScrollView>
   );
 }

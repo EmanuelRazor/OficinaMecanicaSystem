@@ -17,17 +17,22 @@ export default function ClienteCadastrarScreen({ navigation }: Props) {
 
   async function salvar() {
     if (!nome.trim() || !email.trim()) {
-      Alert.alert("Campos obrigatórios", "Informe o nome e o e-mail do cliente.");
+      Alert.alert(
+        "Campos obrigatórios",
+        "Informe o nome e o e-mail do cliente.",
+      );
       return;
     }
 
     setSaving(true);
+
     try {
       await api.criarCliente({
         nome: nome.trim(),
         email: email.trim(),
         telefone: telefone.trim() || undefined,
       });
+
       Alert.alert("Sucesso", "Cliente cadastrado com sucesso.", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
@@ -45,10 +50,16 @@ export default function ClienteCadastrarScreen({ navigation }: Props) {
       keyboardShouldPersistTaps="handled"
     >
       <Text className="mb-5 text-base text-slate-600">
-        Preencha os dados para executar o POST /clientes.
+        Preencha os dados do cliente.
       </Text>
 
-      <FormField label="Nome" required value={nome} onChangeText={setNome} autoCapitalize="words" />
+      <FormField
+        label="Nome"
+        required
+        value={nome}
+        onChangeText={setNome}
+        autoCapitalize="words"
+      />
       <FormField
         label="E-mail"
         required
@@ -64,7 +75,11 @@ export default function ClienteCadastrarScreen({ navigation }: Props) {
         keyboardType="phone-pad"
       />
 
-      <ActionButton title="Cadastrar cliente" onPress={() => void salvar()} loading={saving} />
+      <ActionButton
+        title="Cadastrar cliente"
+        onPress={() => void salvar()}
+        loading={saving}
+      />
     </ScrollView>
   );
 }

@@ -21,7 +21,9 @@ export default function InicioScreen({ navigation }: Props) {
           activeOpacity={0.85}
         >
           <Text className="text-xl font-bold text-white">Clientes</Text>
-          <Text className="mt-1 text-blue-100">Cadastro, consulta, edição e exclusão.</Text>
+          <Text className="mt-1 text-blue-100">
+            Cadastro, consulta, edição e exclusão.
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -30,7 +32,9 @@ export default function InicioScreen({ navigation }: Props) {
           activeOpacity={0.85}
         >
           <Text className="text-xl font-bold text-white">Veículos</Text>
-          <Text className="mt-1 text-emerald-100">Veículos vinculados aos clientes.</Text>
+          <Text className="mt-1 text-emerald-100">
+            Veículos vinculados aos clientes.
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -39,14 +43,10 @@ export default function InicioScreen({ navigation }: Props) {
           activeOpacity={0.85}
         >
           <Text className="text-xl font-bold text-white">Ordens de Serviço</Text>
-          <Text className="mt-1 text-orange-100">Serviços, status e valores.</Text>
-        </TouchableOpacity>
-
-        <View className="mt-auto rounded-xl border border-slate-200 bg-white p-4">
-          <Text className="text-sm text-slate-500">
-            A API deve estar em execução na porta 3000. Ajuste o endereço em config/api.ts para o IP do computador.
+          <Text className="mt-1 text-orange-100">
+            Serviços, status e valores.
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

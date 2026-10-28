@@ -19,7 +19,9 @@ async function request(method, path, body) {
   }
 
   if (!response.ok) {
-    throw new Error(`${method} ${path} -> HTTP ${response.status}: ${JSON.stringify(data)}`);
+    throw new Error(
+      `${method} ${path} -> HTTP ${response.status}: ${JSON.stringify(data)}`,
+    );
   }
 
   return data;
@@ -31,7 +33,7 @@ function assert(condition, message) {
 
 async function main() {
   console.log(`Testando API em ${BASE_URL}`);
-  console.log('Objetivo: validar as 15 rotas definidas na documentação.\n');
+  console.log('Validando as 15 operações principais da API.\n');
 
   let cliente;
   let veiculo;
@@ -58,7 +60,10 @@ async function main() {
     await test('GET /clientes', async () => {
       const lista = await request('GET', '/clientes');
       assert(Array.isArray(lista), 'A resposta deveria ser um array.');
-      assert(lista.some((item) => item.id === cliente.id), 'Cliente criado não apareceu na listagem.');
+      assert(
+        lista.some((item) => item.id === cliente.id),
+        'Cliente criado não apareceu na listagem.',
+      );
     });
 
     await test('GET /clientes/:id', async () => {
@@ -84,13 +89,19 @@ async function main() {
         ano: '2008',
       });
       assert(veiculo?.id, 'Veículo criado sem id.');
-      assert(veiculo.clienteId === cliente.id, 'Veículo não ficou vinculado ao cliente.');
+      assert(
+        veiculo.clienteId === cliente.id,
+        'Veículo não ficou vinculado ao cliente.',
+      );
     });
 
     await test('GET /veiculos', async () => {
       const lista = await request('GET', '/veiculos');
       assert(Array.isArray(lista), 'A resposta deveria ser um array.');
-      assert(lista.some((item) => item.id === veiculo.id), 'Veículo criado não apareceu na listagem.');
+      assert(
+        lista.some((item) => item.id === veiculo.id),
+        'Veículo criado não apareceu na listagem.',
+      );
     });
 
     await test('GET /veiculos/:id', async () => {
@@ -116,13 +127,19 @@ async function main() {
         valor: 150,
       });
       assert(ordem?.id, 'Ordem criada sem id.');
-      assert(ordem.status, 'Ordem criada sem status.');
+      assert(
+        ordem.status === 'Aberta',
+        'Uma nova ordem deve ser criada com status Aberta.',
+      );
     });
 
     await test('GET /ordens-servico', async () => {
       const lista = await request('GET', '/ordens-servico');
       assert(Array.isArray(lista), 'A resposta deveria ser um array.');
-      assert(lista.some((item) => item.id === ordem.id), 'Ordem criada não apareceu na listagem.');
+      assert(
+        lista.some((item) => item.id === ordem.id),
+        'Ordem criada não apareceu na listagem.',
+      );
     });
 
     await test('GET /ordens-servico/:id', async () => {

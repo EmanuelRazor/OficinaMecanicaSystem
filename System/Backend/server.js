@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -11,118 +11,143 @@ let clientes = [];
 let veiculos = [];
 let ordensServico = [];
 
-app.get('/', (req, res) => {
-  res.json({
-    sistema: 'Oficina Mecânica API',
-    status: 'online',
-    porta: PORT,
-    endpoints: ['/health', '/clientes', '/veiculos', '/ordens-servico'],
-  });
-});
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
 // CLIENTES
 app.get('/clientes', (req, res) => res.json(clientes));
 
 app.get('/clientes/:id', (req, res) => {
-  const cliente = clientes.find((c) => c.id === req.params.id);
-  if (!cliente) return res.status(404).json({ erro: 'Cliente não encontrado' });
-  res.json(cliente);
+  const cliente = clientes.find((item) => item.id === req.params.id);
+
+  if (!cliente) {
+    return res.status(404).json({ erro: 'Cliente não encontrado' });
+  }
+
+  return res.json(cliente);
 });
 
 app.post('/clientes', (req, res) => {
-  const novo = { id: Date.now().toString(), ...req.body };
-  clientes.push(novo);
-  res.status(201).json(novo);
+  const novoCliente = {
+    id: Date.now().toString(),
+    ...req.body,
+  };
+
+  clientes.push(novoCliente);
+  return res.status(201).json(novoCliente);
 });
 
 app.put('/clientes/:id', (req, res) => {
-  const index = clientes.findIndex((c) => c.id === req.params.id);
-  if (index < 0) return res.status(404).json({ erro: 'Cliente não encontrado' });
+  const index = clientes.findIndex((item) => item.id === req.params.id);
 
-  clientes[index] = { id: req.params.id, ...req.body };
-  res.json(clientes[index]);
+  if (index < 0) {
+    return res.status(404).json({ erro: 'Cliente não encontrado' });
+  }
+
+  clientes[index] = {
+    id: req.params.id,
+    ...req.body,
+  };
+
+  return res.json(clientes[index]);
 });
 
 app.delete('/clientes/:id', (req, res) => {
-  clientes = clientes.filter((c) => c.id !== req.params.id);
-  res.status(204).send();
+  clientes = clientes.filter((item) => item.id !== req.params.id);
+  return res.status(204).send();
 });
 
 // VEÍCULOS
 app.get('/veiculos', (req, res) => res.json(veiculos));
 
 app.get('/veiculos/:id', (req, res) => {
-  const veiculo = veiculos.find((v) => v.id === req.params.id);
-  if (!veiculo) return res.status(404).json({ erro: 'Veículo não encontrado' });
-  res.json(veiculo);
+  const veiculo = veiculos.find((item) => item.id === req.params.id);
+
+  if (!veiculo) {
+    return res.status(404).json({ erro: 'Veículo não encontrado' });
+  }
+
+  return res.json(veiculo);
 });
 
 app.post('/veiculos', (req, res) => {
   const { clienteId } = req.body;
-  const clienteExiste = clientes.some((c) => c.id === clienteId);
+  const clienteExiste = clientes.some((item) => item.id === clienteId);
 
   if (!clienteExiste) {
     return res.status(400).json({ erro: 'Cliente associado inexistente!' });
   }
 
-  const novo = { id: Date.now().toString(), ...req.body };
-  veiculos.push(novo);
-  res.status(201).json(novo);
+  const novoVeiculo = {
+    id: Date.now().toString(),
+    ...req.body,
+  };
+
+  veiculos.push(novoVeiculo);
+  return res.status(201).json(novoVeiculo);
 });
 
 app.put('/veiculos/:id', (req, res) => {
-  const index = veiculos.findIndex((v) => v.id === req.params.id);
-  if (index < 0) return res.status(404).json({ erro: 'Veículo não encontrado' });
+  const index = veiculos.findIndex((item) => item.id === req.params.id);
 
-  veiculos[index] = { id: req.params.id, ...req.body };
-  res.json(veiculos[index]);
+  if (index < 0) {
+    return res.status(404).json({ erro: 'Veículo não encontrado' });
+  }
+
+  veiculos[index] = {
+    id: req.params.id,
+    ...req.body,
+  };
+
+  return res.json(veiculos[index]);
 });
 
 app.delete('/veiculos/:id', (req, res) => {
-  veiculos = veiculos.filter((v) => v.id !== req.params.id);
-  res.status(204).send();
+  veiculos = veiculos.filter((item) => item.id !== req.params.id);
+  return res.status(204).send();
 });
 
 // ORDENS DE SERVIÇO
 app.get('/ordens-servico', (req, res) => res.json(ordensServico));
 
 app.get('/ordens-servico/:id', (req, res) => {
-  const ordem = ordensServico.find((o) => o.id === req.params.id);
-  if (!ordem) return res.status(404).json({ erro: 'Ordem de serviço não encontrada' });
-  res.json(ordem);
+  const ordem = ordensServico.find((item) => item.id === req.params.id);
+
+  if (!ordem) {
+    return res.status(404).json({ erro: 'Ordem de serviço não encontrada' });
+  }
+
+  return res.json(ordem);
 });
 
 app.post('/ordens-servico', (req, res) => {
-  const novo = {
+  const novaOrdem = {
     id: Date.now().toString(),
-    status: 'Aberta',
     ...req.body,
+    status: 'Aberta',
   };
 
-  ordensServico.push(novo);
-  res.status(201).json(novo);
+  ordensServico.push(novaOrdem);
+  return res.status(201).json(novaOrdem);
 });
 
 app.put('/ordens-servico/:id', (req, res) => {
-  const index = ordensServico.findIndex((o) => o.id === req.params.id);
+  const index = ordensServico.findIndex((item) => item.id === req.params.id);
+
   if (index < 0) {
     return res.status(404).json({ erro: 'Ordem de serviço não encontrada' });
   }
 
-  ordensServico[index] = { id: req.params.id, ...req.body };
-  res.json(ordensServico[index]);
+  ordensServico[index] = {
+    id: req.params.id,
+    ...req.body,
+  };
+
+  return res.json(ordensServico[index]);
 });
 
 app.delete('/ordens-servico/:id', (req, res) => {
-  ordensServico = ordensServico.filter((o) => o.id !== req.params.id);
-  res.status(204).send();
+  ordensServico = ordensServico.filter((item) => item.id !== req.params.id);
+  return res.status(204).send();
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`API rodando na porta ${PORT} 🚀`);
-  console.log(`Android Emulator: http://10.0.2.2:${PORT}`);
+app.listen(PORT, () => {
+  console.log('API rodando na porta 3000 🚀');
 });

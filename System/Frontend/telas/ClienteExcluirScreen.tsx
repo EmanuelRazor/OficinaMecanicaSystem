@@ -18,10 +18,13 @@ export default function ClienteExcluirScreen({ navigation, route }: Props) {
 
   useEffect(() => {
     let ativo = true;
-    api.obterCliente(route.params.id)
+
+    api
+      .obterCliente(route.params.id)
       .then((dados) => ativo && setCliente(dados))
       .catch((error) => ativo && setErro(mensagemDeErro(error)))
       .finally(() => ativo && setLoading(false));
+
     return () => {
       ativo = false;
     };
@@ -29,6 +32,7 @@ export default function ClienteExcluirScreen({ navigation, route }: Props) {
 
   async function excluir() {
     setDeleting(true);
+
     try {
       await api.excluirCliente(route.params.id);
       Alert.alert("Cliente excluído", "O registro foi removido.", [
@@ -41,16 +45,26 @@ export default function ClienteExcluirScreen({ navigation, route }: Props) {
     }
   }
 
-  if (loading) return <FeedbackState loading message="Carregando cliente..." />;
-  if (erro) return <FeedbackState message={erro} />;
-  if (!cliente) return <FeedbackState message="Cliente não encontrado." />;
+  if (loading) {
+    return <FeedbackState loading message="Carregando cliente..." />;
+  }
+
+  if (erro) {
+    return <FeedbackState message={erro} />;
+  }
+
+  if (!cliente) {
+    return <FeedbackState message="Cliente não encontrado." />;
+  }
 
   return (
     <View className="flex-1 bg-slate-100 p-5">
       <View className="rounded-2xl border border-red-200 bg-white p-5">
-        <Text className="text-xl font-bold text-slate-900">Excluir {cliente.nome}?</Text>
+        <Text className="text-xl font-bold text-slate-900">
+          Excluir {cliente.nome}?
+        </Text>
         <Text className="mt-3 text-base leading-6 text-slate-600">
-          Esta tela executa DELETE /clientes/:id. A exclusão não poderá ser desfeita.
+          Esta ação não poderá ser desfeita.
         </Text>
       </View>
 
@@ -60,10 +74,18 @@ export default function ClienteExcluirScreen({ navigation, route }: Props) {
           variant="danger"
           loading={deleting}
           onPress={() =>
-            Alert.alert("Confirmar exclusão", `Deseja realmente excluir ${cliente.nome}?`, [
-              { text: "Cancelar", style: "cancel" },
-              { text: "Excluir", style: "destructive", onPress: () => void excluir() },
-            ])
+            Alert.alert(
+              "Confirmar exclusão",
+              `Deseja realmente excluir ${cliente.nome}?`,
+              [
+                { text: "Cancelar", style: "cancel" },
+                {
+                  text: "Excluir",
+                  style: "destructive",
+                  onPress: () => void excluir(),
+                },
+              ],
+            )
           }
         />
       </View>

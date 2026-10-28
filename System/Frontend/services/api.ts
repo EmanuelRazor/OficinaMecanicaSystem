@@ -24,27 +24,14 @@ function normalizarCaminho(path: string) {
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const url = `${API_URL}${normalizarCaminho(path)}`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
-
   let response: Response;
 
   try {
-    response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-  } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new Error(`Tempo esgotado ao acessar ${url}. Confirme se o backend está rodando na porta 3000.`);
-    }
-
+    response = await fetch(url, options);
+  } catch {
     throw new Error(
-      `Não foi possível conectar à API em ${API_URL}. ` +
-        `No Android Studio Emulator, use http://10.0.2.2:3000 e mantenha o backend iniciado.`,
+      `Não foi possível conectar à API em ${API_URL}. Verifique se o backend está em execução e se o endereço da API está correto.`,
     );
-  } finally {
-    clearTimeout(timeout);
   }
 
   const texto = await response.text();
@@ -54,7 +41,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
     if (texto) {
       try {
-        const corpo = JSON.parse(texto) as { erro?: string; message?: string };
+        const corpo = JSON.parse(texto) as {
+          erro?: string;
+          message?: string;
+        };
         mensagem = corpo.erro ?? corpo.message ?? mensagem;
       } catch {
         mensagem = texto;
@@ -75,6 +65,7 @@ function jsonOptions(method: "POST" | "PUT", body: unknown): RequestInit {
   return {
     method,
     headers: {
+      Accept: "application/json",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
@@ -101,11 +92,15 @@ export const api = {
     request<void>(`/veiculos/${id}`, { method: "DELETE" }),
 
   listarOrdens: () => request<OrdemServico[]>("/ordens-servico"),
-  obterOrdem: (id: string) => request<OrdemServico>(`/ordens-servico/${id}`),
+  obterOrdem: (id: string) =>
+    request<OrdemServico>(`/ordens-servico/${id}`),
   criarOrdem: (dados: OrdemServicoPayload) =>
     request<OrdemServico>("/ordens-servico", jsonOptions("POST", dados)),
   atualizarOrdem: (id: string, dados: OrdemServicoPayload) =>
-    request<OrdemServico>(`/ordens-servico/${id}`, jsonOptions("PUT", dados)),
+    request<OrdemServico>(
+      `/ordens-servico/${id}`,
+      jsonOptions("PUT", dados),
+    ),
   excluirOrdem: (id: string) =>
     request<void>(`/ordens-servico/${id}`, { method: "DELETE" }),
 };
